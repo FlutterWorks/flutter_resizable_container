@@ -14,7 +14,12 @@ class CustomDividerExampleScreen extends StatefulWidget {
 
 class _CustomDividerExampleScreenState
     extends State<CustomDividerExampleScreen> {
-  bool hovered = false;
+  var hovered = false;
+  var length = 0.5;
+  var thickness = 2.0;
+  var padding = 5.0;
+  var crossAxisAlignment = CrossAxisAlignment.center;
+  var mainAxisAlignment = MainAxisAlignment.center;
 
   @override
   Widget build(BuildContext context) {
@@ -33,28 +38,156 @@ class _CustomDividerExampleScreenState
         ],
       ),
       drawer: const NavDrawer(),
-      body: ResizableContainer(
-        direction: Axis.horizontal,
-        divider: ResizableDivider(
-          color: hovered
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.inversePrimary,
-          thickness: 2,
-          size: 14,
-          onHoverEnter: () => setState(() => hovered = true),
-          onHoverExit: () => setState(() => hovered = false),
-        ),
+      body: Column(
         children: [
-          ResizableChild(
-            child: ColoredBox(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: const Center(child: Text('Left')),
-            ),
+          Wrap(
+            alignment: WrapAlignment.start,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            runSpacing: 18,
+            spacing: 18,
+            children: [
+              SizedBox(
+                width: 200,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Length'),
+                    Slider(
+                      min: 0.01,
+                      max: 1.0,
+                      value: length,
+                      onChanged: (value) => setState(() => length = value),
+                    ),
+                    Text('Ratio: ${(length * 100).toStringAsFixed((2))}%'),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 200,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Thickness'),
+                    Slider(
+                      min: 1,
+                      max: 20.0,
+                      divisions: 19,
+                      value: thickness,
+                      onChanged: (value) => setState(() => thickness = value),
+                    ),
+                    Text('${thickness}px'),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 200,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Padding'),
+                    Slider(
+                      min: 0,
+                      max: 20,
+                      divisions: 20,
+                      value: padding,
+                      onChanged: (value) => setState(() => padding = value),
+                    ),
+                    Text('${padding}px'),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 200,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Cross-Axis Alignment'),
+                    DropdownButton(
+                      value: crossAxisAlignment,
+                      items: const [
+                        DropdownMenuItem(
+                          value: CrossAxisAlignment.start,
+                          child: Text('Start'),
+                        ),
+                        DropdownMenuItem(
+                          value: CrossAxisAlignment.center,
+                          child: Text('Center'),
+                        ),
+                        DropdownMenuItem(
+                          value: CrossAxisAlignment.end,
+                          child: Text('End'),
+                        ),
+                      ],
+                      onChanged: (value) => setState(
+                        () => crossAxisAlignment = value!,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 200,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text('Main-Axis Alignment'),
+                    DropdownButton(
+                      value: mainAxisAlignment,
+                      items: const [
+                        DropdownMenuItem(
+                          value: MainAxisAlignment.start,
+                          child: Text('Start'),
+                        ),
+                        DropdownMenuItem(
+                          value: MainAxisAlignment.center,
+                          child: Text('Center'),
+                        ),
+                        DropdownMenuItem(
+                          value: MainAxisAlignment.end,
+                          child: Text('End'),
+                        ),
+                      ],
+                      onChanged: (value) => setState(
+                        () => mainAxisAlignment = value!,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          ResizableChild(
-            child: ColoredBox(
-              color: Theme.of(context).colorScheme.tertiaryContainer,
-              child: const Center(child: Text('Right')),
+          const SizedBox(height: 10),
+          Expanded(
+            child: ResizableContainer(
+              direction: Axis.horizontal,
+              children: [
+                ResizableChild(
+                  divider: ResizableDivider(
+                    color: hovered
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.inversePrimary,
+                    thickness: thickness,
+                    padding: padding,
+                    crossAxisAlignment: crossAxisAlignment,
+                    mainAxisAlignment: mainAxisAlignment,
+                    length: ResizableSize.ratio(length),
+                    onHoverEnter: () => setState(() => hovered = true),
+                    onHoverExit: () => setState(() => hovered = false),
+                    onTapDown: () => setState(() => hovered = true),
+                    onTapUp: () => setState(() => hovered = false),
+                  ),
+                  child: ColoredBox(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    child: const Center(child: Text('Left')),
+                  ),
+                ),
+                ResizableChild(
+                  child: ColoredBox(
+                    color: Theme.of(context).colorScheme.tertiaryContainer,
+                    child: const Center(child: Text('Right')),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
